@@ -1,47 +1,52 @@
 // ==========================
-// Get user info
+// Get user info from localStorage
 // ==========================
 let user = JSON.parse(localStorage.getItem('chatUser') || '{}');
 if (!user.name) {
   alert("Please enter your name first!");
   window.location.href = 'index.html';
 }
-document.getElementById('header').innerText = `Welcome, ${user.name}`;
 
 // ==========================
-// Firebase setup
+// Import Firebase modules
+// ==========================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-database.js";
+
+// ==========================
+// Initialize Firebase
 // ==========================
 const firebaseConfig = {
-  apiKey: "AIzaSyAZMRyjNGLhbYSA47_OaTiLyZaPOCKZur4",
-  authDomain: "live-chat-a5839.firebaseapp.com",
-  databaseURL: "https://live-chat-a5839-default-rtdb.firebaseio.com",
-  projectId: "live-chat-a5839",
-  storageBucket: "live-chat-a5839.appspot.com",
-  messagingSenderId: "1053299545235",
-  appId: "1:1053299545235:web:b83174bff1bd498d9be966"
+  apiKey: "AIzaSyDjnNg5ZwgYhXmdcmXbIrPQ6dZR4g6qwHY",
+  authDomain: "live-chat-6b081.firebaseapp.com",
+  databaseURL: "https://live-chat-6b081-default-rtdb.firebaseio.com",
+  projectId: "live-chat-6b081",
+  storageBucket: "live-chat-6b081.appspot.com",
+  messagingSenderId: "909951780715",
+  appId: "1:909951780715:web:c4cbfe67b6a43e5d33ae2e"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const chatRef = db.ref('messages');
-const usersRef = db.ref('onlineUsers');
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const chatRef = ref(db, 'messages');
+const usersRef = ref(db, 'onlineUsers');
 
 // ==========================
-// User online
+// Set user as online
 // ==========================
-const userRef = usersRef.push({ name: user.name });
-userRef.onDisconnect().remove();
+const userRef = push(usersRef, { name: user.name });
+onDisconnect(userRef).remove();
 
 // ==========================
 // Display online users
 // ==========================
-usersRef.on('value', snapshot => {
+const usersUl = document.getElementById('usersUl');
+onValue(usersRef, snapshot => {
   const users = snapshot.val() || {};
-  const ul = document.getElementById('usersUl');
-  ul.innerHTML = '';
+  usersUl.innerHTML = '';
   Object.values(users).forEach(u => {
     const li = document.createElement('li');
     li.innerText = u.name;
-    ul.appendChild(li);
+    usersUl.appendChild(li);
   });
 });
 
@@ -58,29 +63,28 @@ function sendMsg() {
   if (!text) return;
 
   const now = new Date();
-  const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
-  chatRef.push({
+  push(chatRef, {
     name: user.name,
     text: text,
     timestamp: Date.now(),
     time: time
-  }).then(() => msgInput.value = '')
-    .catch(err => {
-      console.error('Send failed:', err);
-      alert('Message failed. Check console.');
-    });
+  }).then(() => msgInput.value = '');
 }
 
 // ==========================
-// Display messages
+// Display messages in real-time
 // ==========================
-chatRef.on('child_added', snapshot => {
-  const msg = snapshot.val();
-  const div = document.createElement('div');
-  div.classList.add('message');
-  div.classList.add(msg.name === user.name ? 'own' : 'other');
-  div.innerHTML = `<strong>${msg.name}</strong>: ${msg.text} <span class="time">${msg.time}</span>`;
-  chatArea.appendChild(div);
+onValue(chatRef, snapshot => {
+  const messages = snapshot.val() || {};
+  chatArea.innerHTML = '';
+  Object.values(messages).forEach(msg => {
+    const div = document.createElement('div');
+    div.classList.add('message');
+    div.classList.add(msg.name === user.name ? 'own' : 'other');
+    div.innerHTML = `<strong>${msg.name}</strong>: ${msg.text} <span class="time">${msg.time}</span>`;
+    chatArea.appendChild(div);
+  });
   chatArea.scrollTop = chatArea.scrollHeight;
 });
