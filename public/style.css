@@ -1,4 +1,18 @@
-body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
-input { padding: 10px; margin: 5px 0; width: 100%; }
-button { padding: 10px; }
-#messages, #users { border: 1px solid #ccc; padding: 10px; margin: 10px 0; max-height: 300px; overflow-y: auto; }
+body { font-family:'Segoe UI',sans-serif; margin:0; display:flex; flex-direction:column; height:100vh; }
+header { background:#4facfe; color:white; padding:1rem; text-align:center; }
+#container { display:flex; flex:1; overflow:hidden; }
+#chatArea { flex:3; padding:1rem; overflow-y:auto; background:#f1f5f9; display:flex; flex-direction:column; }
+.message { padding:0.8rem 1rem; border-radius:12px; margin:0.5rem 0; max-width:70%; position:relative; }
+.message .time { font-size:0.7rem; color:#555; position:absolute; bottom:2px; right:8px; }
+.own { background:#00f2fe; color:white; align-self:flex-end; }
+.other { background:white; color:#333; align-self:flex-start; }
+#usersList { flex:1; padding:1rem; border-left:1px solid #ccc; background:#f9fafb; overflow-y:auto; }
+#usersList h4 { margin-top:0; }
+footer { display:flex; padding:0.5rem; border-top:1px solid #ccc; }
+input { flex:1; padding:0.6rem 0.8rem; border-radius:8px; border:1px solid #ccc; }
+button { padding:0.6rem 1rem; border:none; border-radius:8px; background:#4facfe; color:white; cursor:pointer; }
+.login-card { background:white; padding:2rem; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.15); text-align:center; width:300px; margin:auto; margin-top:10vh;}
+.login-card h2 { margin-bottom:1rem; color:#333; }
+.login-card input { width:100%; padding:0.8rem; margin:0.5rem 0; border-radius:8px; border:1px solid #ccc; font-size:1rem; }
+.login-card button { width:100%; padding:0.9rem; margin-top:1rem; border:none; border-radius:8px; background:#4facfe; color:white; font-size:1rem; cursor:pointer; }
+.login-card button:hover { background:#00f2fe; }

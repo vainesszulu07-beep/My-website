@@ -4,23 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Live Chat</title>
+<link rel="stylesheet" href="style.css">
 <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.25.0/firebase-database-compat.js"></script>
-<style>
-body { font-family:'Segoe UI',sans-serif; margin:0; display:flex; flex-direction:column; height:100vh; }
-header { background:#4facfe; color:white; padding:1rem; text-align:center; }
-#container { display:flex; flex:1; overflow:hidden; }
-#chatArea { flex:3; padding:1rem; overflow-y:auto; background:#f1f5f9; display:flex; flex-direction:column; }
-.message { padding:0.8rem 1rem; border-radius:12px; margin:0.5rem 0; max-width:70%; position:relative; }
-.message .time { font-size:0.7rem; color:#555; position:absolute; bottom:2px; right:8px; }
-.own { background:#00f2fe; color:white; align-self:flex-end; }
-.other { background:white; color:#333; align-self:flex-start; }
-#usersList { flex:1; padding:1rem; border-left:1px solid #ccc; background:#f9fafb; overflow-y:auto; }
-#usersList h4 { margin-top:0; }
-footer { display:flex; padding:0.5rem; border-top:1px solid #ccc; }
-input { flex:1; padding:0.6rem 0.8rem; border-radius:8px; border:1px solid #ccc; }
-button { padding:0.6rem 1rem; border:none; border-radius:8px; background:#4facfe; color:white; cursor:pointer; }
-</style>
+<script src="chat.js" defer></script>
 </head>
 <body>
 
@@ -32,76 +19,11 @@ button { padding:0.6rem 1rem; border:none; border-radius:8px; background:#4facfe
     <ul id="usersUl"></ul>
   </div>
 </div>
+
 <footer>
   <input id="msgInput" placeholder="Type a message...">
   <button id="sendBtn">Send</button>
 </footer>
-
-<script>
-// 1️⃣ Get user info
-let user = JSON.parse(localStorage.getItem('chatUser')||'{}');
-if(!user.name) window.location.href='index.html';
-document.getElementById('header').innerText = `Welcome, ${user.name}`;
-
-// 2️⃣ Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyAZMRyjNGLhbYSA47_OaTiLyZaPOCKZur4",
-  authDomain: "live-chat-a5839.firebaseapp.com",
-  databaseURL: "https://live-chat-a5839-default-rtdb.firebaseio.com",
-  projectId: "live-chat-a5839",
-  storageBucket: "live-chat-a5839.appspot.com",
-  messagingSenderId: "1053299545235",
-  appId: "1:1053299545235:web:b83174bff1bd498d9be966"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// 3️⃣ References
-const chatRef = db.ref('messages');
-const usersRef = db.ref('onlineUsers');
-
-// 4️⃣ Mark user online
-const userRef = usersRef.push({name:user.name});
-userRef.onDisconnect().remove();
-
-// 5️⃣ Online users list
-usersRef.on('value', snapshot=>{
-  const users = snapshot.val()||{};
-  const ul = document.getElementById('usersUl');
-  ul.innerHTML='';
-  Object.values(users).forEach(u=>{
-    const li = document.createElement('li');
-    li.innerText=u.name;
-    ul.appendChild(li);
-  });
-});
-
-// 6️⃣ Send message
-const chatArea = document.getElementById('chatArea');
-const msgInput = document.getElementById('msgInput');
-document.getElementById('sendBtn').addEventListener('click', sendMsg);
-msgInput.addEventListener('keypress', e=>{ if(e.key==='Enter') sendMsg(); });
-
-function sendMsg(){
-  const text = msgInput.value.trim();
-  if(!text) return;
-  const now = new Date();
-  const time = now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
-  chatRef.push({name:user.name,text:text,timestamp:Date.now(),time:time});
-  msgInput.value='';
-}
-
-// 7️⃣ Display messages
-chatRef.on('child_added', snapshot=>{
-  const msg = snapshot.val();
-  const div = document.createElement('div');
-  div.classList.add('message');
-  div.classList.add(msg.name===user.name?'own':'other');
-  div.innerHTML=`<strong>${msg.name}</strong>: ${msg.text} <span class="time">${msg.time}</span>`;
-  chatArea.appendChild(div);
-  chatArea.scrollTop = chatArea.scrollHeight;
-});
-</script>
 
 </body>
 </html>
