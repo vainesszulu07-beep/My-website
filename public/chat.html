@@ -2,13 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat Room</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="chat.js" defer></script>
 </head>
 <body>
-  <h1>All Users</h1>
-  <ul id="users-list"></ul>
-  <script src="chat.js"></script>
+  <h1>Chat Room</h1>
+  <div id="users"><h3>Users:</h3></div>
+  <div id="messages"><h3>Messages:</h3></div>
+  <form id="chatForm">
+    <input type="text" id="message" placeholder="Type your message..." />
+    <button type="submit">Send</button>
+  </form>
 </body>
 </html>

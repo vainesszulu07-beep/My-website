@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login - Chat App</title>
+  <title>Login / Signup</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Login / Signup</h1>
-  <form id="login-form">
-    <input type="text" id="name" placeholder="Name" required>
-    <input type="text" id="phone" placeholder="Phone" required>
+  <h1>Welcome</h1>
+  <form id="loginForm">
+    <input type="text" id="username" placeholder="Your Name" required />
+    <input type="text" id="phone" placeholder="Phone Number" required />
     <button type="submit">Start Chatting</button>
   </form>
-  <div id="error"></div>
-  <script type="module" src="app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
