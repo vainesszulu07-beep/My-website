@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Realtime Chat</h1>
+  <div id="users-list"></div>
+  <div id="chat-box" style="height:300px; overflow-y:scroll; border:1px solid #ccc; padding:5px;"></div>
+  <form id="chat-form">
+    <input type="text" id="message" placeholder="Type a message..." required>
+    <button type="submit">Send</button>
+  </form>
+  <script type="module" src="chat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</body>
+</html>
