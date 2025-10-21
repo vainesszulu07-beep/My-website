@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Live Chat</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Live Chat Login</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="login-card">
-  <h2>Enter Chat</h2>
-  <input type="text" id="name" placeholder="Your name">
-  <input type="text" id="phone" placeholder="Phone (optional)">
-  <button id="start">Join Chat</button>
-</div>
+  <div class="login-box">
+    <h2>Enter Chat</h2>
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="phone" placeholder="Phone (optional)">
+    <button id="startBtn">Start Chatting</button>
+  </div>
 
-<script>
-document.getElementById('start').addEventListener('click', () => {
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  if (!name) return alert('Enter your name');
-  localStorage.setItem('chatUser', JSON.stringify({ name, phone }));
-  window.location.href = 'chat.html';
-});
-</script>
+  <script>
+    document.getElementById('startBtn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      if (!name) return alert("Enter your name");
+
+      localStorage.setItem('chatUser', JSON.stringify({ name, phone }));
+      window.location.href = 'chat.html';
+    });
+  </script>
 </body>
 </html>

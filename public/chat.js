@@ -8,13 +8,7 @@ if (!user.name) {
 }
 
 // ==========================
-// Import Firebase modules
-// ==========================
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/9.25.0/firebase-database.js";
-
-// ==========================
-// Initialize Firebase
+// Initialize Firebase (compat CDN version)
 // ==========================
 const firebaseConfig = {
   apiKey: "AIzaSyDjnNg5ZwgYhXmdcmXbIrPQ6dZR4g6qwHY",
@@ -25,22 +19,23 @@ const firebaseConfig = {
   messagingSenderId: "909951780715",
   appId: "1:909951780715:web:c4cbfe67b6a43e5d33ae2e"
 };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const chatRef = ref(db, 'messages');
-const usersRef = ref(db, 'onlineUsers');
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const chatRef = db.ref('messages');
+const usersRef = db.ref('onlineUsers');
 
 // ==========================
 // Set user as online
 // ==========================
-const userRef = push(usersRef, { name: user.name });
-onDisconnect(userRef).remove();
+const userRef = usersRef.push({ name: user.name });
+userRef.onDisconnect().remove();
 
 // ==========================
 // Display online users
 // ==========================
 const usersUl = document.getElementById('usersUl');
-onValue(usersRef, snapshot => {
+usersRef.on('value', snapshot => {
   const users = snapshot.val() || {};
   usersUl.innerHTML = '';
   Object.values(users).forEach(u => {
@@ -55,6 +50,7 @@ onValue(usersRef, snapshot => {
 // ==========================
 const chatArea = document.getElementById('chatArea');
 const msgInput = document.getElementById('msgInput');
+
 document.getElementById('sendBtn').addEventListener('click', sendMsg);
 msgInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
@@ -65,18 +61,22 @@ function sendMsg() {
   const now = new Date();
   const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
 
-  push(chatRef, {
+  chatRef.push({
     name: user.name,
     text: text,
     timestamp: Date.now(),
     time: time
-  }).then(() => msgInput.value = '');
+  }).then(() => msgInput.value = '')
+    .catch(err => {
+      console.error('Message send failed:', err);
+      alert('Could not send message. Check console.');
+    });
 }
 
 // ==========================
 // Display messages in real-time
 // ==========================
-onValue(chatRef, snapshot => {
+chatRef.on('value', snapshot => {
   const messages = snapshot.val() || {};
   chatArea.innerHTML = '';
   Object.values(messages).forEach(msg => {
