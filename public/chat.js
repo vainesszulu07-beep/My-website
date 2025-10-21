@@ -2,9 +2,7 @@
 // Get user info from localStorage
 // ==========================
 let user = JSON.parse(localStorage.getItem('chatUser') || '{}');
-if (!user.name) {
-  user = { name: "Guest" }; // fallback if no name stored
-}
+if (!user.name) user = { name: "Guest" };
 
 // ==========================
 // Initialize Firebase (compat CDN)
