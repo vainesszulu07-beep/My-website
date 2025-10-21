@@ -2,11 +2,11 @@
 let user = JSON.parse(localStorage.getItem('chatUser') || '{}');
 if (!user.name) user = { name: "Guest" };
 
-// Initialize Ably Realtime
-const ably = new Ably.Realtime('0EWn-w.31HSwg:NqCi_lRupqkLwEPDfTkCvJcR6FQxbosyPf-pGtiLWGc');
+// Initialize Ably Realtime with your key
+const ably = new Ably.Realtime('0EWn-w.VljMsA:ug9QItIMybaBhtUFOulr7rstilnqKUSjc9lhQd0YxNw');
 const channel = ably.channels.get('chat');
 
-// Elements
+// DOM elements
 const chatArea = document.getElementById('chatArea');
 const msgInput = document.getElementById('msgInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -19,11 +19,11 @@ function sendMsg() {
   msgInput.value = '';
 }
 
-// Button + Enter
+// Send on button click or Enter key
 sendBtn.addEventListener('click', sendMsg);
 msgInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
 
-// Receive messages
+// Receive messages in real-time
 channel.subscribe('message', msg => {
   const div = document.createElement('div');
   div.classList.add('message');
