@@ -3,12 +3,11 @@
 // ==========================
 let user = JSON.parse(localStorage.getItem('chatUser') || '{}');
 if (!user.name) {
-  alert("Please enter your name first!");
-  window.location.href = 'index.html';
+  user = { name: "Guest" }; // fallback if no name stored
 }
 
 // ==========================
-// Initialize Firebase (compat CDN version)
+// Initialize Firebase (compat CDN)
 // ==========================
 const firebaseConfig = {
   apiKey: "AIzaSyDjnNg5ZwgYhXmdcmXbIrPQ6dZR4g6qwHY",
@@ -23,36 +22,19 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 const chatRef = db.ref('messages');
-const usersRef = db.ref('onlineUsers');
 
 // ==========================
-// Set user as online
-// ==========================
-const userRef = usersRef.push({ name: user.name });
-userRef.onDisconnect().remove();
-
-// ==========================
-// Display online users
-// ==========================
-const usersUl = document.getElementById('usersUl');
-usersRef.on('value', snapshot => {
-  const users = snapshot.val() || {};
-  usersUl.innerHTML = '';
-  Object.values(users).forEach(u => {
-    const li = document.createElement('li');
-    li.innerText = u.name;
-    usersUl.appendChild(li);
-  });
-});
-
-// ==========================
-// Send messages
+// Elements
 // ==========================
 const chatArea = document.getElementById('chatArea');
 const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
 
-document.getElementById('sendBtn').addEventListener('click', sendMsg);
-msgInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+// ==========================
+// Send message
+// ==========================
+sendBtn.addEventListener('click', sendMsg);
+msgInput.addEventListener('keypress', e => { if(e.key==='Enter') sendMsg(); });
 
 function sendMsg() {
   const text = msgInput.value.trim();
@@ -64,13 +46,9 @@ function sendMsg() {
   chatRef.push({
     name: user.name,
     text: text,
-    timestamp: Date.now(),
     time: time
   }).then(() => msgInput.value = '')
-    .catch(err => {
-      console.error('Message send failed:', err);
-      alert('Could not send message. Check console.');
-    });
+    .catch(err => console.error("Message failed:", err));
 }
 
 // ==========================
@@ -82,7 +60,6 @@ chatRef.on('value', snapshot => {
   Object.values(messages).forEach(msg => {
     const div = document.createElement('div');
     div.classList.add('message');
-    div.classList.add(msg.name === user.name ? 'own' : 'other');
     div.innerHTML = `<strong>${msg.name}</strong>: ${msg.text} <span class="time">${msg.time}</span>`;
     chatArea.appendChild(div);
   });
